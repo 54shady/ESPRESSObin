@@ -86,3 +86,35 @@
 
 	cp Image boot/
 	cp armada-3720-community.dtb boot/
+
+## 使用过程中遇到的问题和解决办法
+
+Ubunt14.04网络配置
+
+手动配置(开机不会在配置网络上卡吨)
+
+	TBD
+
+使用DHCP配置(添加下面内容到/etc/network/interfaces)
+
+	auto wan
+	iface wan inet dhcp
+
+使用DHCP配置开机时配置始终不成功日志如下
+
+	Waiting for network configuration...
+	Waiting up to 60 more seconds for network configuration...
+	Booting system without full network configuration...
+
+进入系统后手动开启网卡,顺序不能颠倒,否则wan始终打不开
+
+	ifconfig eth0 up
+	ifconfig wan up
+
+查看此时的路由表
+
+	root@localhost:~# route
+	Kernel IP routing table
+	Destination     Gateway         Genmask         Flags Metric Ref    Use Iface
+	default         192.168.1.1     0.0.0.0         UG    0      0        0 wan
+	192.168.1.0     *               255.255.255.0   U     0      0        0 wan
