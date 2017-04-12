@@ -1,6 +1,20 @@
 # ESPRESSObin
 
-## SD卡启动Buildroot系统
+## SD卡启动系统
+
+查看SD卡状态(下面是笔者主机信息)
+
+	lsblk
+	NAME   MAJ:MIN RM   SIZE RO TYPE MOUNTPOINT
+	sda      8:0    0 931.5G  0 disk
+	├─sda1   8:1    0    50G  0 part
+	├─sda2   8:2    0     1K  0 part
+	├─sda5   8:5    0   673G  0 part /home
+	├─sda6   8:6    0 517.7M  0 part /boot
+	├─sda7   8:7    0   200G  0 part /
+	└─sda8   8:8    0     8G  0 part [SWAP]
+	sdb      8:16   1  14.9G  0 disk
+	└─sdb1   8:17   1  14.9G  0 part
 
 清除SD卡(这里假设是/dev/sdb)内所有数据,可以用lsblk查看SD卡状态
 
@@ -19,7 +33,7 @@
 	sudo mkdir -p /mnt/sdcard
 	sudo mount /dev/sdb1 /mnt/sdcard
 
-将buildroot文件系统解压到/mnt/sdcard/下
+将根文件系统(buildroot, ubuntu, yocto)解压到/mnt/sdcard/下(这里统一用rootfs.tar.gz表示)
 
 	sudo tar -xvf rootfs.tar.gz -C /mnt/sdcard/
 
@@ -43,3 +57,32 @@
 使用bootmmc启动开发板
 
 	run bootmmc
+
+## Ubuntu 14.04根文件系统制作
+
+[ubuntu-base-14.04-core-arm64.tar.gz下载地址](http://cdimage.ubuntu.com/ubuntu-base/releases/14.04/release/)
+
+将ubuntu core解压到本地
+
+	mkdir ubunturootfs
+	sudo tar xzvf ubuntu-base-14.04-core-arm64.tar.gz -C ubunturootfs/
+
+修改默认启动级别(etc/init/rc-sysinit.conf)
+
+	DEFAULT_RUNLEVEL=3
+
+去除root用户登录密码(etc/passwd)
+
+	root::0:0:root:/root:/bin/bash
+
+创建一个串口初始化配置文件(etc/init/ttyMV0.conf)
+
+	start on stopped rc or RUNLEVEL=[12345]
+	stop on runlevel [!12345]
+	respawn
+	exec /sbin/getty -L 115200 ttyMV0 vt100 -a root
+
+将内核和DTB拷贝到根文件系统的boot目录下(制作好的文件系统就可以直接拷贝到SD卡中使用)
+
+	cp Image boot/
+	cp armada-3720-community.dtb boot/
