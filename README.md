@@ -1,5 +1,21 @@
 # ESPRESSObin
 
+## 编译内核
+
+### 下载编译器
+
+[https://releases.linaro.org/components/toolchain/binaries/5.2-2015.11-2/aarch64-linux-gnu/gcc-linaro-5.2-2015.11-2-x86_64_aarch64-linux-gnu.tar.xz](https://releases.linaro.org/components/toolchain/binaries/5.2-2015.11-2/aarch64-linux-gnu/gcc-linaro-5.2-2015.11-2-x86_64_aarch64-linux-gnu.tar.xz)
+
+### 下载内核代码
+
+	git clone https://github.com/MarvellEmbeddedProcessors/linux-marvell
+	git checkout linux-4.4.8-armada-17.02-espressobin
+
+### 配置和编译内核
+
+	make O=out ARCH=arm64 CROSS_COMPILE=aarch64-linux-gnu- mvebu_v8_lsp_defconfig
+	make O=out ARCH=arm64 CROSS_COMPILE=aarch64-linux-gnu- -j8
+
 ## SD卡启动系统
 
 查看SD卡状态(下面是笔者主机信息)
