@@ -11,10 +11,56 @@
 	git clone https://github.com/MarvellEmbeddedProcessors/linux-marvell
 	git checkout linux-4.4.8-armada-17.02-espressobin
 
-### 配置和编译内核
+### 配置和编译内核(默认配置)
 
 	make O=out ARCH=arm64 CROSS_COMPILE=aarch64-linux-gnu- mvebu_v8_lsp_defconfig
 	make O=out ARCH=arm64 CROSS_COMPILE=aarch64-linux-gnu- -j8
+
+### 编译内核支持ubuntu route
+
+使用下面内核配置
+
+[ubuntu kenrel config](./ubuntu_config)
+
+基本设置
+
+网络配置使能联网下载软件包
+
+	ifconfig eth0 up
+	dhclient wan
+
+安装相关的软件包
+
+	apt-get update
+	apt-get install bridge-utils samba dnsmasq-base iptables
+
+
+开启路由(操作完成后就是一个gateway的角色)
+
+	brctl addbr br0
+	ifconfig eth0 0.0.0.0 up
+	ifconfig wan 0.0.0.0 up
+	ifconfig lan0 0.0.0.0 up
+	ifconfig lan1 0.0.0.0 up
+	brctl addif br0 lan0
+	brctl addif br0 lan1
+	ifconfig br0 192.168.22.1
+
+	/etc/init.d/smbd stop
+	/etc/init.d/smbd start
+
+	dnsmasq --interface=br0 --dhcp-range=br0,192.168.22.2,192.168.22.199,12h
+	echo 1 > /proc/sys/net/ipv4/ip_forward
+	iptables -t nat -A POSTROUTING -o wan -j MASQUERADE
+	dhclient wan
+
+测试是否设置成功ping google
+
+	ping 8.8.8.8
+
+测试是否设置成功ping local machine
+
+	ping 192.168.1.100
 
 ## SD卡启动系统
 
