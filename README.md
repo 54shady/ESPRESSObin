@@ -149,6 +149,52 @@
 	cp Image boot/
 	cp armada-3720-community.dtb boot/
 
+## NFS服务器配置
+
+安装必要的软件包
+
+	apt-get install nfs-kernel-server
+
+设置需要export的目录
+
+	mkdir -p /espressobin_export/music
+
+设置相关权限
+
+	chmod -R 777 espressobin_export/
+	chown -R nobody:nogroup espressobin_export/
+
+绑定目录到NFS的路径
+
+	mount --bind /home/music /espressobin_export/music
+
+如果需要开机就bind的话在fstab里添加如下内容
+
+	/home/music   /espressobin_export/music   none   bind   0   0
+
+确认NFS服务器和客户端都在相同的域(/etc/idmapd.conf)
+
+	[Mapping]
+	Nobody-User = nobody
+	Nobody-Group = nogroup
+
+添加如下内容到/etc/exports
+
+	/espressobin_export       192.168.22.0/24(rw,fsid=0,no_subtree_check,sync)
+	/espressobin_export/music 192.168.22.0/24(rw,nohide,no_subtree_check,sync)
+
+开启NFS
+
+	exportfs -ra
+
+每次有修改/etc/exports文件都要执行下面命令
+
+	service nfs-kernel-server restart
+
+在客户端操作如下(192.168.22.1是NFS服务器)
+
+	sudo mount -o proto=tcp,port=2049 192.168.22.1:/espressobin_export /media
+
 ## 使用过程中遇到的问题和解决办法
 
 Ubunt14.04网络配置
