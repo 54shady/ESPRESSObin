@@ -18,6 +18,10 @@
 
 ### 编译内核支持ubuntu route
 
+先看下拓扑图
+
+![net top](./top.png)
+
 使用下面内核配置
 
 [ubuntu kenrel config](./ubuntu_config)
@@ -54,13 +58,12 @@
 	iptables -t nat -A POSTROUTING -o wan -j MASQUERADE
 	dhclient wan
 
-测试是否设置成功ping google
+在开发板上测试是否设置成功ping google
 
 	ping 8.8.8.8
 
-测试是否设置成功ping local machine
-
-	ping 192.168.1.100
+将PC接入到开发部的lan口上,PC自动获取到了和br0在同一个网段的IP地址
+在PC上测试是否能上网,能上网表示配置成功
 
 ## SD卡启动系统
 
