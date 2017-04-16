@@ -169,6 +169,7 @@
 
 绑定目录到NFS的路径
 
+	mkdir /home/music
 	mount --bind /home/music /espressobin_export/music
 
 如果需要开机就bind的话在fstab里添加如下内容
@@ -176,6 +177,7 @@
 	/home/music   /espressobin_export/music   none   bind   0   0
 
 确认NFS服务器和客户端都在相同的域(/etc/idmapd.conf)
+服务器和客户端都有下面内容
 
 	[Mapping]
 	Nobody-User = nobody
@@ -183,8 +185,8 @@
 
 添加如下内容到/etc/exports
 
-	/espressobin_export       192.168.22.0/24(rw,fsid=0,no_subtree_check,sync)
-	/espressobin_export/music 192.168.22.0/24(rw,nohide,no_subtree_check,sync)
+	/espressobin_export       192.168.1.0/24(rw,fsid=0,no_subtree_check,sync)
+	/espressobin_export/music 192.168.1.0/24(rw,nohide,no_subtree_check,sync)
 
 开启NFS
 
@@ -194,9 +196,10 @@
 
 	service nfs-kernel-server restart
 
-在客户端操作如下(192.168.22.1是NFS服务器)
+在客户端(192.168.1.100)操作如下(192.168.1.103是NFS服务器,即开发板)
+使用的是VERSION2,如果要使用VERSION4,需要配置开发板的NFS服务器
 
-	sudo mount -o proto=tcp,port=2049 192.168.22.1:/espressobin_export /media
+	sudo mount -t nfs -o nolock,vers=2 192.168.1.103:/espressobin_export/music /mnt
 
 ## 使用过程中遇到的问题和解决办法
 
