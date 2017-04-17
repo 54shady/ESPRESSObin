@@ -201,6 +201,83 @@
 
 	sudo mount -t nfs -o nolock,vers=2 192.168.1.103:/espressobin_export/music /mnt
 
+## miniDLNA服务器搭建
+
+### 安装miniDLNA(ubuntu系统)
+
+在源文件中添加下面内容(/etc/apt/sources.list)
+
+	deb http://httpredir.debian.org/debian jessie main contrib non-free
+
+安装(安装完后可以注释掉sources.list里的源,以免冲突)
+
+	apt-get update
+	apt-get install minidlna
+
+### 配置miniDLNA(/etc/minidlna.conf)
+
+配置文件内容如下
+
+	network_interface=br0
+	media_dir=A,/media/minidlna/Music
+	media_dir=P,/media/minidlna/Pictures
+	media_dir=V,/media/minidlna/Videos
+	friendly_name=ESPRESSObin_dlna
+	db_dir=/var/cache/minidlna
+	log_dir=/var/log
+	inotify=yes
+	presentation_url=http://192.168.22.1:8200
+
+创建必要的目录
+
+	mkdir /media/minidlna
+	mkdir /media/minidlna/Pictures
+	mkdir /media/minidlna/Videos
+	mkdir /media/minidlna/Music
+
+重启miniDLNA服务和数据
+
+	service minidlna restart
+	service minidlna force-reload
+
+### 配置开发板网络
+
+	brctl addbr br0
+	ifconfig eth0 0.0.0.0 up
+	ifconfig wan 0.0.0.0 up
+	ifconfig lan0 0.0.0.0 up
+	ifconfig lan1 0.0.0.0 up
+	brctl addif br0 lan0
+	brctl addif br0 lan1
+	ifconfig br0 192.168.22.1
+
+	/etc/init.d/smbd stop
+	/etc/init.d/smbd start
+
+	dnsmasq --interface=br0 --dhcp-range=br0,192.168.22.2,192.168.22.199,12h
+	echo 1 > /proc/sys/net/ipv4/ip_forward
+	iptables -t nat -A POSTROUTING -o wan -j MASQUERADE
+	dhclient wan
+
+### 测试是否安装成功
+
+在客户端输入br0的IP地址(192.168.22.1)和端口号进行访问
+使用DLAN客户端软件(kodi)访问服务器
+
+### 开机自启动miniDLNA
+
+开启开机自启动服务
+
+	update-rc.d minidlna defaults
+
+如果出现下面的错误提示
+
+	System start/stop links for /etc/init.d/minidlna already exist.
+
+需要用enable选项
+
+	update-rc.d minidlna enable
+
 ## 使用过程中遇到的问题和解决办法
 
 Ubunt14.04网络配置
