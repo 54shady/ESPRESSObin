@@ -1,5 +1,19 @@
 # ESPRESSObin
 
+## 目录
+
+[编译内核](#编译内核)
+
+[SD卡启动系统](#SD卡启动系统)
+
+[根文件系统制作](#根文件系统制作)
+
+[NFS服务器配置](#NFS服务器配置)
+
+[miniDLAN服务器搭建](#miniDLAN服务器搭建)
+
+[使用过程中遇到的问题和解决办法](#使用过程中遇到的问题和解决办法)
+
 ## 编译内核
 
 ### 下载编译器
@@ -123,7 +137,7 @@
 
 	run bootmmc
 
-## Ubuntu 14.04根文件系统制作
+## 根文件系统制作(Ubuntu 14.04)
 
 [ubuntu-base-14.04-core-arm64.tar.gz下载地址](http://cdimage.ubuntu.com/ubuntu-base/releases/14.04/release/)
 
