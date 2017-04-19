@@ -231,6 +231,40 @@
 
 	TBD
 
+## 下载服务器搭建
+
+### 安装aria2
+
+	apt-get install aria2
+
+### 创建相应的目录
+
+	mkdir -p /etc/aria2/
+	touch /etc/aria2/aria2.session
+	chmod 777 /etc/aria2/aria2.session
+
+### 添加配置文件(/etc/aria2/aria2.conf)
+
+[aria2配置文件](./aria2.conf)
+
+	chmod 777 aria2.conf
+
+### 安装apache2
+
+	apt-get install apache2
+
+### 安装YAAW
+
+	chmod 777 /var/www/html
+	cd /var/www/html/
+	git clone https://github.com/binux/yaaw.git /var/www/html
+
+### 启动aria2c
+
+	aria2c --conf-path=/etc/aria2/aria2.conf
+
+### 在客户端连接该服务器测试
+
 ## miniDLNA服务器搭建
 
 ### 安装miniDLNA(ubuntu系统)
