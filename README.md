@@ -201,6 +201,36 @@
 
 	sudo mount -t nfs -o nolock,vers=2 192.168.1.103:/espressobin_export/music /mnt
 
+## Samba服务器搭建
+
+### 安装samba
+
+	apt-get update
+	apt-get install samba
+
+### 设置指定访问用户
+
+	adduser espressobin
+	smbpasswd -a espressobin
+	smbpasswd -e espressobin
+
+### 配置文件(/etc/samba/smb.conf)
+
+	[myshare]
+	comment = espressobin's share
+	path = /home/espressobin
+	valid users = root espressobin
+	browseable = yes
+	guest ok = no
+	public = yes
+	writable = yes
+	printable = no
+	create mask = 0765
+
+### Linux客户端访问Samba服务器
+
+	TBD
+
 ## miniDLNA服务器搭建
 
 ### 安装miniDLNA(ubuntu系统)
