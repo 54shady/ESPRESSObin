@@ -342,6 +342,44 @@
 
 	update-rc.d minidlna enable
 
+## 驱动开发
+
+### 开发环境搭建(tftp)
+
+笔者使用的开发主机是Gentoo Linux所以下面的配置针对Gentoo
+
+安装tftp
+
+	sudo emerge -v net-ftp/atftp
+
+配置(/etc/conf.d/atftp)
+
+	TFTPD_ROOT="/home/zeroway/ESPRESSObin"
+	TFTPD_OPTS="--daemon --user nobody --group nobody"
+
+开启tftp服务(服务器IP:192.168.1.100)
+
+    /etc/init.d/atftp start
+
+在开发板上使用tftp从服务器上下载文件
+
+	apt-get install atftp
+	atftp -g -r hello.ko 192.168.1.100
+
+### 第一个驱动程序
+
+[驱动源码在这里下载](./code/hello.c)
+
+编译命令参考
+
+	make ARCH=arm64 CROSS_COMPILE=/home/zeroway/ESPRESSObin/tool/gcc-linaro-5.2-2015.11-2-x86_64_aarch64-linux-gnu/bin/aarch64-linux-gnu- KERNEL_DIR=/home/zeroway/ESPRESSObin/src/kernel/linux-marvell-linux-4.4.8-armada-17.02-espressobin KERNEL_BUID_OUTPUT=/home/zeroway/ESPRESSObin/src/kernel/linux-marvell-linux-4.4.8-armada-17.02-espressobin/out
+
+测试
+
+	echo 8 8 8 8 > /proc/sys/kernel/printk
+	insmod hello.ko
+	rmmod hello
+
 ## 使用过程中遇到的问题和解决办法
 
 Ubunt14.04网络配置
